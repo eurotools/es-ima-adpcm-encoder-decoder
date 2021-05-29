@@ -9,3 +9,5 @@ It is only compatible with headerless IMA ADPCM files, so, to decode an IMA file
 
 ### Download
 Click here to download:
+
+[![GitHub All Releases](https://img.shields.io/github/v/release/jmarti856/ima-adpcm_encoder-decoder.svg?style=for-the-badge)](https://github.com/jmarti856/ima-adpcm_encoder-decoder/latest)
