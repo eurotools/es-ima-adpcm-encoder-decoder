@@ -38,6 +38,7 @@ namespace ImaAdpcm_Encoder_Decoder
             this.Textbox_EncodeFilePath = new System.Windows.Forms.TextBox();
             this.Label_EncodeFile = new System.Windows.Forms.Label();
             this.GroupBox_Decoder = new System.Windows.Forms.GroupBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.Button_Decode = new System.Windows.Forms.Button();
             this.Numeric_DecodeInterleaving = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
@@ -49,7 +50,6 @@ namespace ImaAdpcm_Encoder_Decoder
             this.Button_SearchFileDecode = new System.Windows.Forms.Button();
             this.Textbox_DecodeFilePath = new System.Windows.Forms.TextBox();
             this.Label_DecodeFile = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.GroupBox_Encoder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Numeric_EncodeInterleaving)).BeginInit();
             this.GroupBox_Decoder.SuspendLayout();
@@ -84,7 +84,7 @@ namespace ImaAdpcm_Encoder_Decoder
             this.Checkbox_InputIsStereo.Location = new System.Drawing.Point(208, 48);
             this.Checkbox_InputIsStereo.Name = "Checkbox_InputIsStereo";
             this.Checkbox_InputIsStereo.Size = new System.Drawing.Size(117, 17);
-            this.Checkbox_InputIsStereo.TabIndex = 14;
+            this.Checkbox_InputIsStereo.TabIndex = 5;
             this.Checkbox_InputIsStereo.Text = "Input is a stereo file";
             this.Checkbox_InputIsStereo.UseVisualStyleBackColor = true;
             // 
@@ -94,7 +94,7 @@ namespace ImaAdpcm_Encoder_Decoder
             this.Button_Encode.Location = new System.Drawing.Point(203, 78);
             this.Button_Encode.Name = "Button_Encode";
             this.Button_Encode.Size = new System.Drawing.Size(185, 66);
-            this.Button_Encode.TabIndex = 13;
+            this.Button_Encode.TabIndex = 6;
             this.Button_Encode.Text = "Encode";
             this.Button_Encode.UseVisualStyleBackColor = true;
             this.Button_Encode.Click += new System.EventHandler(this.Button_Encode_Click);
@@ -143,8 +143,10 @@ namespace ImaAdpcm_Encoder_Decoder
             // 
             // Textbox_EncodeFilePath
             // 
+            this.Textbox_EncodeFilePath.BackColor = System.Drawing.SystemColors.Window;
             this.Textbox_EncodeFilePath.Location = new System.Drawing.Point(43, 19);
             this.Textbox_EncodeFilePath.Name = "Textbox_EncodeFilePath";
+            this.Textbox_EncodeFilePath.ReadOnly = true;
             this.Textbox_EncodeFilePath.Size = new System.Drawing.Size(494, 20);
             this.Textbox_EncodeFilePath.TabIndex = 1;
             // 
@@ -181,13 +183,23 @@ namespace ImaAdpcm_Encoder_Decoder
             this.GroupBox_Decoder.TabStop = false;
             this.GroupBox_Decoder.Text = "Decoder:";
             // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.SystemColors.Window;
+            this.textBox1.Location = new System.Drawing.Point(222, 45);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(63, 20);
+            this.textBox1.TabIndex = 6;
+            this.textBox1.Text = "16";
+            // 
             // Button_Decode
             // 
             this.Button_Decode.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.Button_Decode.Location = new System.Drawing.Point(203, 124);
             this.Button_Decode.Name = "Button_Decode";
             this.Button_Decode.Size = new System.Drawing.Size(185, 66);
-            this.Button_Decode.TabIndex = 12;
+            this.Button_Decode.TabIndex = 11;
             this.Button_Decode.Text = "Decode";
             this.Button_Decode.UseVisualStyleBackColor = true;
             this.Button_Decode.Click += new System.EventHandler(this.Button_Decode_Click);
@@ -322,16 +334,6 @@ namespace ImaAdpcm_Encoder_Decoder
             this.Label_DecodeFile.Size = new System.Drawing.Size(26, 13);
             this.Label_DecodeFile.TabIndex = 0;
             this.Label_DecodeFile.Text = "File:";
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.textBox1.Location = new System.Drawing.Point(222, 45);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(63, 20);
-            this.textBox1.TabIndex = 13;
-            this.textBox1.Text = "16";
             // 
             // Frm_Main
             // 

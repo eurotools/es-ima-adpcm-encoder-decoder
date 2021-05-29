@@ -42,7 +42,15 @@ namespace ImaAdpcm_Encoder_Decoder
                                 byte[] encodedDataLeftChannel = ImaADPCM.EncodeIMA_ADPCM(leftChannelData, leftChannelData.Length);
                                 byte[] encodedDataRightChannel = ImaADPCM.EncodeIMA_ADPCM(rightChannelData, rightChannelData.Length);
 
-                                File.WriteAllBytes(savePath, ImaADPCM.CombineChannelsIMA(encodedDataLeftChannel, encodedDataRightChannel, (int)Numeric_EncodeInterleaving.Value));
+                                try
+                                {
+                                    byte[] combinedData = ImaADPCM.CombineChannelsIMA(encodedDataLeftChannel, encodedDataRightChannel, (int)Numeric_EncodeInterleaving.Value);
+                                    File.WriteAllBytes(savePath, combinedData);
+                                }
+                                catch
+                                {
+                                    MessageBox.Show("An error ocurred while interleaving data, is not possible to interleave the data with the specified value, use a lower value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
                             }
                             else
                             {
@@ -82,13 +90,20 @@ namespace ImaAdpcm_Encoder_Decoder
                     uint interleavingValue = (uint)Numeric_DecodeInterleaving.Value;
                     if (IsPowerOfTwo(interleavingValue))
                     {
-                        byte[] leftChannelData = ImaADPCM.SplitImaChannels(imaData, (int)Numeric_DecodeInterleaving.Value, true);
-                        byte[] rightChannelData = ImaADPCM.SplitImaChannels(imaData, (int)Numeric_DecodeInterleaving.Value, false);
+                        try
+                        {
+                            byte[] leftChannelData = ImaADPCM.SplitImaChannels(imaData, (int)Numeric_DecodeInterleaving.Value, true);
+                            byte[] rightChannelData = ImaADPCM.SplitImaChannels(imaData, (int)Numeric_DecodeInterleaving.Value, false);
 
-                        byte[] decodedDataLeftChannel = ImaADPCM.DecodeIMA_ADPCM(leftChannelData, leftChannelData.Length * 2);
-                        byte[] decodedDataRightChannel = ImaADPCM.DecodeIMA_ADPCM(rightChannelData, rightChannelData.Length * 2);
+                            byte[] decodedDataLeftChannel = ImaADPCM.DecodeIMA_ADPCM(leftChannelData, leftChannelData.Length * 2);
+                            byte[] decodedDataRightChannel = ImaADPCM.DecodeIMA_ADPCM(rightChannelData, rightChannelData.Length * 2);
 
-                        WavFunctions.CreateStereoWavFile(saveFilePath, decodedDataLeftChannel, decodedDataRightChannel, (int)Numeric_DecodeFrequency.Value, 16);
+                            WavFunctions.CreateStereoWavFile(saveFilePath, decodedDataLeftChannel, decodedDataRightChannel, (int)Numeric_DecodeFrequency.Value, 16);
+                        }
+                        catch
+                        {
+                            MessageBox.Show("An error ocurred while reading this file, seems that the interleaving value is not correct", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                     else
                     {
