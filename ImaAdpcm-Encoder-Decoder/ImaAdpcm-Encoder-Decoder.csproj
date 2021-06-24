@@ -7,8 +7,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D4311C17-A45C-4D41-988E-6A10CD2B15D1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ImaAdpcm_Encoder_Decoder</RootNamespace>
-    <AssemblyName>ImaAdpcm-Encoder-Decoder</AssemblyName>
+    <RootNamespace>ImaAdpcm_Tool</RootNamespace>
+    <AssemblyName>ImaADPCM-Tool</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

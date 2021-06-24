@@ -50,28 +50,30 @@ namespace ImaAdpcm_Encoder_Decoder
             this.Button_SearchFileDecode = new System.Windows.Forms.Button();
             this.Textbox_DecodeFilePath = new System.Windows.Forms.TextBox();
             this.Label_DecodeFile = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.GroupBox_Encoder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Numeric_EncodeInterleaving)).BeginInit();
             this.GroupBox_Decoder.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Numeric_DecodeInterleaving)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Numeric_DecodeChannels)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.Numeric_DecodeFrequency)).BeginInit();
+            this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // GroupBox_Encoder
             // 
             this.GroupBox_Encoder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.GroupBox_Encoder.Controls.Add(this.Checkbox_InputIsStereo);
+            this.GroupBox_Encoder.Controls.Add(this.groupBox1);
             this.GroupBox_Encoder.Controls.Add(this.Button_Encode);
-            this.GroupBox_Encoder.Controls.Add(this.Numeric_EncodeInterleaving);
-            this.GroupBox_Encoder.Controls.Add(this.Label_EncodeInterleaving);
             this.GroupBox_Encoder.Controls.Add(this.Button_EncodeSearchFile);
             this.GroupBox_Encoder.Controls.Add(this.Textbox_EncodeFilePath);
             this.GroupBox_Encoder.Controls.Add(this.Label_EncodeFile);
             this.GroupBox_Encoder.Location = new System.Drawing.Point(12, 12);
             this.GroupBox_Encoder.Name = "GroupBox_Encoder";
-            this.GroupBox_Encoder.Size = new System.Drawing.Size(574, 150);
+            this.GroupBox_Encoder.Size = new System.Drawing.Size(462, 127);
             this.GroupBox_Encoder.TabIndex = 0;
             this.GroupBox_Encoder.TabStop = false;
             this.GroupBox_Encoder.Text = "Encoder:";
@@ -81,7 +83,7 @@ namespace ImaAdpcm_Encoder_Decoder
             this.Checkbox_InputIsStereo.AutoSize = true;
             this.Checkbox_InputIsStereo.Checked = true;
             this.Checkbox_InputIsStereo.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.Checkbox_InputIsStereo.Location = new System.Drawing.Point(208, 48);
+            this.Checkbox_InputIsStereo.Location = new System.Drawing.Point(9, 40);
             this.Checkbox_InputIsStereo.Name = "Checkbox_InputIsStereo";
             this.Checkbox_InputIsStereo.Size = new System.Drawing.Size(117, 17);
             this.Checkbox_InputIsStereo.TabIndex = 5;
@@ -90,10 +92,11 @@ namespace ImaAdpcm_Encoder_Decoder
             // 
             // Button_Encode
             // 
-            this.Button_Encode.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.Button_Encode.Location = new System.Drawing.Point(203, 78);
+            this.Button_Encode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Button_Encode.Location = new System.Drawing.Point(363, 45);
             this.Button_Encode.Name = "Button_Encode";
-            this.Button_Encode.Size = new System.Drawing.Size(185, 66);
+            this.Button_Encode.Size = new System.Drawing.Size(93, 76);
             this.Button_Encode.TabIndex = 6;
             this.Button_Encode.Text = "Encode";
             this.Button_Encode.UseVisualStyleBackColor = true;
@@ -101,7 +104,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // 
             // Numeric_EncodeInterleaving
             // 
-            this.Numeric_EncodeInterleaving.Location = new System.Drawing.Point(82, 45);
+            this.Numeric_EncodeInterleaving.Location = new System.Drawing.Point(77, 19);
             this.Numeric_EncodeInterleaving.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -124,7 +127,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // Label_EncodeInterleaving
             // 
             this.Label_EncodeInterleaving.AutoSize = true;
-            this.Label_EncodeInterleaving.Location = new System.Drawing.Point(11, 47);
+            this.Label_EncodeInterleaving.Location = new System.Drawing.Point(6, 21);
             this.Label_EncodeInterleaving.Name = "Label_EncodeInterleaving";
             this.Label_EncodeInterleaving.Size = new System.Drawing.Size(65, 13);
             this.Label_EncodeInterleaving.TabIndex = 3;
@@ -133,7 +136,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // Button_EncodeSearchFile
             // 
             this.Button_EncodeSearchFile.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Button_EncodeSearchFile.Location = new System.Drawing.Point(543, 17);
+            this.Button_EncodeSearchFile.Location = new System.Drawing.Point(431, 17);
             this.Button_EncodeSearchFile.Name = "Button_EncodeSearchFile";
             this.Button_EncodeSearchFile.Size = new System.Drawing.Size(25, 23);
             this.Button_EncodeSearchFile.TabIndex = 2;
@@ -143,42 +146,37 @@ namespace ImaAdpcm_Encoder_Decoder
             // 
             // Textbox_EncodeFilePath
             // 
+            this.Textbox_EncodeFilePath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.Textbox_EncodeFilePath.BackColor = System.Drawing.SystemColors.Window;
-            this.Textbox_EncodeFilePath.Location = new System.Drawing.Point(43, 19);
+            this.Textbox_EncodeFilePath.Location = new System.Drawing.Point(63, 19);
             this.Textbox_EncodeFilePath.Name = "Textbox_EncodeFilePath";
             this.Textbox_EncodeFilePath.ReadOnly = true;
-            this.Textbox_EncodeFilePath.Size = new System.Drawing.Size(494, 20);
+            this.Textbox_EncodeFilePath.Size = new System.Drawing.Size(362, 20);
             this.Textbox_EncodeFilePath.TabIndex = 1;
             // 
             // Label_EncodeFile
             // 
             this.Label_EncodeFile.AutoSize = true;
-            this.Label_EncodeFile.Location = new System.Drawing.Point(11, 22);
+            this.Label_EncodeFile.Location = new System.Drawing.Point(6, 22);
             this.Label_EncodeFile.Name = "Label_EncodeFile";
-            this.Label_EncodeFile.Size = new System.Drawing.Size(26, 13);
+            this.Label_EncodeFile.Size = new System.Drawing.Size(51, 13);
             this.Label_EncodeFile.TabIndex = 0;
-            this.Label_EncodeFile.Text = "File:";
+            this.Label_EncodeFile.Text = "File Path:";
             // 
             // GroupBox_Decoder
             // 
             this.GroupBox_Decoder.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.GroupBox_Decoder.Controls.Add(this.textBox1);
+            this.GroupBox_Decoder.Controls.Add(this.groupBox2);
             this.GroupBox_Decoder.Controls.Add(this.Button_Decode);
-            this.GroupBox_Decoder.Controls.Add(this.Numeric_DecodeInterleaving);
-            this.GroupBox_Decoder.Controls.Add(this.label5);
-            this.GroupBox_Decoder.Controls.Add(this.Numeric_DecodeChannels);
-            this.GroupBox_Decoder.Controls.Add(this.Label_Channel);
-            this.GroupBox_Decoder.Controls.Add(this.Label_Bits);
-            this.GroupBox_Decoder.Controls.Add(this.Numeric_DecodeFrequency);
-            this.GroupBox_Decoder.Controls.Add(this.Label_Rate);
             this.GroupBox_Decoder.Controls.Add(this.Button_SearchFileDecode);
             this.GroupBox_Decoder.Controls.Add(this.Textbox_DecodeFilePath);
             this.GroupBox_Decoder.Controls.Add(this.Label_DecodeFile);
-            this.GroupBox_Decoder.Location = new System.Drawing.Point(12, 168);
+            this.GroupBox_Decoder.Location = new System.Drawing.Point(12, 144);
             this.GroupBox_Decoder.Name = "GroupBox_Decoder";
-            this.GroupBox_Decoder.Size = new System.Drawing.Size(574, 196);
+            this.GroupBox_Decoder.Size = new System.Drawing.Size(462, 130);
             this.GroupBox_Decoder.TabIndex = 1;
             this.GroupBox_Decoder.TabStop = false;
             this.GroupBox_Decoder.Text = "Decoder:";
@@ -186,7 +184,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // textBox1
             // 
             this.textBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.textBox1.Location = new System.Drawing.Point(222, 45);
+            this.textBox1.Location = new System.Drawing.Point(72, 45);
             this.textBox1.Name = "textBox1";
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(63, 20);
@@ -195,10 +193,11 @@ namespace ImaAdpcm_Encoder_Decoder
             // 
             // Button_Decode
             // 
-            this.Button_Decode.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.Button_Decode.Location = new System.Drawing.Point(203, 124);
+            this.Button_Decode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Button_Decode.Location = new System.Drawing.Point(363, 47);
             this.Button_Decode.Name = "Button_Decode";
-            this.Button_Decode.Size = new System.Drawing.Size(185, 66);
+            this.Button_Decode.Size = new System.Drawing.Size(93, 77);
             this.Button_Decode.TabIndex = 11;
             this.Button_Decode.Text = "Decode";
             this.Button_Decode.UseVisualStyleBackColor = true;
@@ -207,7 +206,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // Numeric_DecodeInterleaving
             // 
             this.Numeric_DecodeInterleaving.BackColor = System.Drawing.SystemColors.Window;
-            this.Numeric_DecodeInterleaving.Location = new System.Drawing.Point(505, 45);
+            this.Numeric_DecodeInterleaving.Location = new System.Drawing.Point(233, 45);
             this.Numeric_DecodeInterleaving.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -230,7 +229,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(434, 47);
+            this.label5.Location = new System.Drawing.Point(162, 47);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(65, 13);
             this.label5.TabIndex = 9;
@@ -239,7 +238,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // Numeric_DecodeChannels
             // 
             this.Numeric_DecodeChannels.BackColor = System.Drawing.SystemColors.Window;
-            this.Numeric_DecodeChannels.Location = new System.Drawing.Point(362, 45);
+            this.Numeric_DecodeChannels.Location = new System.Drawing.Point(233, 19);
             this.Numeric_DecodeChannels.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -262,7 +261,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // Label_Channel
             // 
             this.Label_Channel.AutoSize = true;
-            this.Label_Channel.Location = new System.Drawing.Point(302, 47);
+            this.Label_Channel.Location = new System.Drawing.Point(173, 21);
             this.Label_Channel.Name = "Label_Channel";
             this.Label_Channel.Size = new System.Drawing.Size(54, 13);
             this.Label_Channel.TabIndex = 7;
@@ -271,7 +270,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // Label_Bits
             // 
             this.Label_Bits.AutoSize = true;
-            this.Label_Bits.Location = new System.Drawing.Point(189, 47);
+            this.Label_Bits.Location = new System.Drawing.Point(39, 47);
             this.Label_Bits.Name = "Label_Bits";
             this.Label_Bits.Size = new System.Drawing.Size(27, 13);
             this.Label_Bits.TabIndex = 5;
@@ -280,7 +279,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // Numeric_DecodeFrequency
             // 
             this.Numeric_DecodeFrequency.BackColor = System.Drawing.SystemColors.Window;
-            this.Numeric_DecodeFrequency.Location = new System.Drawing.Point(77, 45);
+            this.Numeric_DecodeFrequency.Location = new System.Drawing.Point(72, 19);
             this.Numeric_DecodeFrequency.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -298,7 +297,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // Label_Rate
             // 
             this.Label_Rate.AutoSize = true;
-            this.Label_Rate.Location = new System.Drawing.Point(11, 47);
+            this.Label_Rate.Location = new System.Drawing.Point(6, 21);
             this.Label_Rate.Name = "Label_Rate";
             this.Label_Rate.Size = new System.Drawing.Size(60, 13);
             this.Label_Rate.TabIndex = 3;
@@ -307,7 +306,7 @@ namespace ImaAdpcm_Encoder_Decoder
             // Button_SearchFileDecode
             // 
             this.Button_SearchFileDecode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Button_SearchFileDecode.Location = new System.Drawing.Point(543, 17);
+            this.Button_SearchFileDecode.Location = new System.Drawing.Point(431, 17);
             this.Button_SearchFileDecode.Name = "Button_SearchFileDecode";
             this.Button_SearchFileDecode.Size = new System.Drawing.Size(25, 23);
             this.Button_SearchFileDecode.TabIndex = 2;
@@ -323,7 +322,7 @@ namespace ImaAdpcm_Encoder_Decoder
             this.Textbox_DecodeFilePath.Location = new System.Drawing.Point(38, 19);
             this.Textbox_DecodeFilePath.Name = "Textbox_DecodeFilePath";
             this.Textbox_DecodeFilePath.ReadOnly = true;
-            this.Textbox_DecodeFilePath.Size = new System.Drawing.Size(499, 20);
+            this.Textbox_DecodeFilePath.Size = new System.Drawing.Size(387, 20);
             this.Textbox_DecodeFilePath.TabIndex = 1;
             // 
             // Label_DecodeFile
@@ -335,18 +334,53 @@ namespace ImaAdpcm_Encoder_Decoder
             this.Label_DecodeFile.TabIndex = 0;
             this.Label_DecodeFile.Text = "File:";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.Label_EncodeInterleaving);
+            this.groupBox1.Controls.Add(this.Checkbox_InputIsStereo);
+            this.groupBox1.Controls.Add(this.Numeric_EncodeInterleaving);
+            this.groupBox1.Location = new System.Drawing.Point(6, 45);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(351, 76);
+            this.groupBox1.TabIndex = 7;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "File Parameters:";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.Numeric_DecodeFrequency);
+            this.groupBox2.Controls.Add(this.textBox1);
+            this.groupBox2.Controls.Add(this.Label_Rate);
+            this.groupBox2.Controls.Add(this.Label_Bits);
+            this.groupBox2.Controls.Add(this.Numeric_DecodeInterleaving);
+            this.groupBox2.Controls.Add(this.Label_Channel);
+            this.groupBox2.Controls.Add(this.label5);
+            this.groupBox2.Controls.Add(this.Numeric_DecodeChannels);
+            this.groupBox2.Location = new System.Drawing.Point(6, 45);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(351, 79);
+            this.groupBox2.TabIndex = 12;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "File Parameters:";
+            // 
             // Frm_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(598, 382);
+            this.ClientSize = new System.Drawing.Size(486, 287);
             this.Controls.Add(this.GroupBox_Decoder);
             this.Controls.Add(this.GroupBox_Encoder);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Frm_Main";
-            this.Text = "IMA ADPCM Encoder - Decoder";
+            this.Text = "IMA ADPCM Tool";
             this.GroupBox_Encoder.ResumeLayout(false);
             this.GroupBox_Encoder.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Numeric_EncodeInterleaving)).EndInit();
@@ -355,6 +389,10 @@ namespace ImaAdpcm_Encoder_Decoder
             ((System.ComponentModel.ISupportInitialize)(this.Numeric_DecodeInterleaving)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Numeric_DecodeChannels)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.Numeric_DecodeFrequency)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -382,6 +420,8 @@ namespace ImaAdpcm_Encoder_Decoder
         private System.Windows.Forms.TextBox Textbox_EncodeFilePath;
         private System.Windows.Forms.CheckBox Checkbox_InputIsStereo;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }
 
