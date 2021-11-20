@@ -265,50 +265,26 @@ namespace ImaAdpcm_Encoder_Decoder
         //*===============================================================================================
         public static byte[] CombineChannelsIMA(byte[] leftChannel, byte[] rightChannel, int interleaving)
         {
-            byte[] interleavedData = new byte[leftChannel.Length + rightChannel.Length];
+            MemoryStream outBuff = new MemoryStream();
 
             //Interleave channels
-            using (MemoryStream memStream = new MemoryStream())
+            int IndexLC = 0, IndexRC = 0, i = 0;
+            while (IndexLC < leftChannel.Length || IndexRC < rightChannel.Length)
             {
-                using (BinaryWriter bw = new BinaryWriter(memStream))
+                if ((i % 2) == 0)
                 {
-                    int IndexLC = 0, IndexRC = 0, i = 0;
-                    while (IndexLC < leftChannel.Length || IndexRC < rightChannel.Length)
-                    {
-                        byte[] chunkToWrite = new byte[interleaving];
-                        if ((i % 2) == 0)
-                        {
-                            if (leftChannel.Length - IndexLC > interleaving)
-                            {
-                                Buffer.BlockCopy(leftChannel, IndexLC, chunkToWrite, 0, interleaving);
-                            }
-                            else
-                            {
-                                int remainingData = leftChannel.Length - IndexLC;
-                                Buffer.BlockCopy(leftChannel, IndexLC, chunkToWrite, 0, remainingData);
-                            }
-                            IndexLC += interleaving;
-                        }
-                        else
-                        {
-                            if (rightChannel.Length - IndexRC > interleaving)
-                            {
-                                Buffer.BlockCopy(rightChannel, IndexRC, chunkToWrite, 0, interleaving);
-                            }
-                            else
-                            {
-                                int remainingData = rightChannel.Length - IndexRC;
-                                Buffer.BlockCopy(rightChannel, IndexRC, chunkToWrite, 0, remainingData);
-                            }
-                            IndexRC += interleaving;
-                        }
-                        i++;
-                        bw.Write(chunkToWrite);
-                    }
+                    outBuff.WriteByte(leftChannel[IndexLC]);
+                    IndexLC += interleaving;
                 }
-                interleavedData = memStream.ToArray();
+                else
+                {
+                    outBuff.WriteByte(rightChannel[IndexRC]);
+                    IndexRC += interleaving;
+                }
+                i++;
             }
-            return interleavedData;
+            
+            return outBuff.ToArray();
         }
 
         public static byte[][] SplitChannels(byte[] inout, int channels)
