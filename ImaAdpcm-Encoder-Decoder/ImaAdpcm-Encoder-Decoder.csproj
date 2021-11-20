@@ -9,9 +9,9 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>ImaAdpcm_Tool</RootNamespace>
     <AssemblyName>ImaADPCM-Tool</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
@@ -67,7 +67,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Clases\Browsers.cs" />
     <Compile Include="Clases\WavFunctions.cs" />
     <Compile Include="Frm_Main.cs">
       <SubType>Form</SubType>

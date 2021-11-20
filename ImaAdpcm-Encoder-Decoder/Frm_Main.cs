@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudio.Wave;
+using System;
 using System.IO;
 using System.Windows.Forms;
 
@@ -16,7 +17,14 @@ namespace ImaAdpcm_Encoder_Decoder
         //*===============================================================================================
         private void Button_EncodeSearchFile_Click(object sender, EventArgs e)
         {
-            Textbox_EncodeFilePath.Text = Browsers.FileBrowserDialog("Wav Audio File (*.WAV)|*.wav", 0, true);
+            //Open files explorer
+            OpenFileDialog.Filter = "Wave Audio File (*.wav)|*.wav";
+            DialogResult openWaveFile = OpenFileDialog.ShowDialog();
+            if (openWaveFile == DialogResult.OK)
+            {
+                //Get the selected file 
+                Textbox_EncodeFilePath.Text = OpenFileDialog.FileName;
+            }
         }
 
         private void Button_Encode_Click(object sender, EventArgs e)
@@ -24,53 +32,51 @@ namespace ImaAdpcm_Encoder_Decoder
             //Ensure that the file still exists
             if (File.Exists(Textbox_EncodeFilePath.Text))
             {
-                short[] pcmDataWav = WavFunctions.GetPcmDataWavFile(Textbox_EncodeFilePath.Text, 16);
-                if (pcmDataWav != null)
-                {
-                    string savePath = Browsers.SaveFileBrowser("IMA Audio File (*.ima)|*.ima", 0, true, string.Join("", Path.GetFileNameWithoutExtension(Textbox_EncodeFilePath.Text), ".IMA"));
-
-                    if (!string.IsNullOrEmpty(savePath))
+                    using (WaveFileReader fileReader = new WaveFileReader(Textbox_EncodeFilePath.Text))
                     {
-                        if (Directory.Exists(Path.GetDirectoryName(savePath)))
+                        if (fileReader.WaveFormat.BitsPerSample == 16 && fileReader.WaveFormat.Encoding == WaveFormatEncoding.Pcm)
                         {
-                            if (Checkbox_InputIsStereo.Checked)
+                            //Get PCM Data (in bytes)
+                            byte[] pcmData = new byte[fileReader.Length];
+                            fileReader.Read(pcmData, 0, (int)fileReader.Length);
+
+                            //Parse PCM Data to a short array
+                            short[] samplesShort = new short[pcmData.Length / 2];
+                            WaveBuffer sourceWaveBuffer = new WaveBuffer(pcmData);
+                            for (int i = 0; i < samplesShort.Length; i++)
                             {
-                                uint interleavingValue = (uint)Numeric_EncodeInterleaving.Value;
-                                if (IsPowerOfTwo(interleavingValue))
+                                samplesShort[i] = sourceWaveBuffer.ShortBuffer[i];
+                            }
+
+                            //Save File
+                            SaveFileDialog.Filter = "Interactive Multimedia Association ADPCM File(*.ima)| *.ima";
+                            SaveFileDialog.FileName = string.Join("", Path.GetFileNameWithoutExtension(Textbox_EncodeFilePath.Text), "_Encoded");
+                            DialogResult saveFileDialog = SaveFileDialog.ShowDialog();
+                            if (saveFileDialog == DialogResult.OK)
+                            {
+                                //Encode stereo
+                                byte[] encodedData;
+                                if (fileReader.WaveFormat.Channels == 2)
                                 {
-                                    short[] leftChannelData = WavFunctions.SplitWavChannels(pcmDataWav, true);
-                                    short[] rightChannelData = WavFunctions.SplitWavChannels(pcmDataWav, false);
+                                    short[][] splittedData = WavFunctions.SplitChannels(samplesShort, 2);
+                                    byte[] encodedDataLeftChannel = ImaADPCM.EncodeIMA_ADPCM(splittedData[0]);
+                                    byte[] encodedDataRightChannel = ImaADPCM.EncodeIMA_ADPCM(splittedData[1]);
 
-                                    byte[] encodedDataLeftChannel = ImaADPCM.EncodeIMA_ADPCM(leftChannelData, leftChannelData.Length);
-                                    byte[] encodedDataRightChannel = ImaADPCM.EncodeIMA_ADPCM(rightChannelData, rightChannelData.Length);
-
-                                    try
-                                    {
-                                        byte[] combinedData = ImaADPCM.CombineChannelsIMA(encodedDataLeftChannel, encodedDataRightChannel, (int)Numeric_EncodeInterleaving.Value);
-                                        File.WriteAllBytes(savePath, combinedData);
-                                    }
-                                    catch
-                                    {
-                                        MessageBox.Show("An error ocurred while interleaving data, is not possible to interleave the data with the specified value, use a lower value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                    }
+                                    encodedData = ImaADPCM.CombineChannelsIMA(encodedDataLeftChannel, encodedDataRightChannel, 1);
                                 }
+                                //Encode mono
                                 else
                                 {
-                                    MessageBox.Show("The interleaving value must be power of 2.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                    encodedData = ImaADPCM.EncodeIMA_ADPCM(samplesShort);
                                 }
-                            }
-                            else
-                            {
-                                byte[] encodedData = ImaADPCM.EncodeIMA_ADPCM(pcmDataWav, pcmDataWav.Length);
-                                File.WriteAllBytes(savePath, encodedData);
+                                File.WriteAllBytes(SaveFileDialog.FileName, encodedData);
                             }
                         }
+                        else
+                        {
+                            MessageBox.Show("Format not supported", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
-                }
-                else
-                {
-                    MessageBox.Show("Seems that the input audio file is not compatible, this tool is only compatible with PCM encoded 16 bits WAV files.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
             }
         }
 
@@ -79,7 +85,14 @@ namespace ImaAdpcm_Encoder_Decoder
         //*===============================================================================================
         private void Button_SearchFileDecode_Click(object sender, EventArgs e)
         {
-            Textbox_DecodeFilePath.Text = Browsers.FileBrowserDialog("IMA Audio File (*.ima)|*.ima", 0, true);
+            //Open files explorer
+            OpenFileDialog.Filter = "Interactive Multimedia Association ADPCM File (*.ima)|*.ima";
+            DialogResult openImaFile = OpenFileDialog.ShowDialog();
+            if (openImaFile == DialogResult.OK)
+            {
+                //Get the selected file 
+                Textbox_DecodeFilePath.Text = OpenFileDialog.FileName;
+            }
         }
 
         private void Button_Decode_Click(object sender, EventArgs e)
@@ -87,49 +100,27 @@ namespace ImaAdpcm_Encoder_Decoder
             if (File.Exists(Textbox_DecodeFilePath.Text))
             {
                 byte[] imaData = File.ReadAllBytes(Textbox_DecodeFilePath.Text);
-                string saveFilePath = Browsers.SaveFileBrowser("Wav Audio File (*.WAV)|*.wav", 0, true, string.Join("", Path.GetFileNameWithoutExtension(Textbox_DecodeFilePath.Text), ".IMA"));
-                if (!string.IsNullOrEmpty(saveFilePath))
+
+                //Save File
+                SaveFileDialog.Filter = "Wave Audio File (*.wav)|*.wav";
+                SaveFileDialog.FileName = string.Join("", Path.GetFileNameWithoutExtension(Textbox_DecodeFilePath.Text), "_Decoded");
+                DialogResult saveFileDialog = SaveFileDialog.ShowDialog();
+                if (saveFileDialog == DialogResult.OK)
                 {
-                    if (Directory.Exists(Path.GetDirectoryName(saveFilePath)))
+                    if (Numeric_DecodeChannels.Value == 2)
                     {
-                        if (Numeric_DecodeChannels.Value == 2)
-                        {
-                            uint interleavingValue = (uint)Numeric_DecodeInterleaving.Value;
-                            if (IsPowerOfTwo(interleavingValue))
-                            {
-                                try
-                                {
-                                    byte[] leftChannelData = ImaADPCM.SplitImaChannels(imaData, (int)Numeric_DecodeInterleaving.Value, true);
-                                    byte[] rightChannelData = ImaADPCM.SplitImaChannels(imaData, (int)Numeric_DecodeInterleaving.Value, false);
-
-                                    byte[] decodedDataLeftChannel = ImaADPCM.DecodeIMA_ADPCM(leftChannelData, leftChannelData.Length * 2);
-                                    byte[] decodedDataRightChannel = ImaADPCM.DecodeIMA_ADPCM(rightChannelData, rightChannelData.Length * 2);
-
-                                    WavFunctions.CreateStereoWavFile(saveFilePath, decodedDataLeftChannel, decodedDataRightChannel, (int)Numeric_DecodeFrequency.Value, 16);
-                                }
-                                catch
-                                {
-                                    MessageBox.Show("An error ocurred while reading this file, seems that the interleaving value is not correct", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                }
-                            }
-                            else
-                            {
-                                MessageBox.Show("The interleaving value must be power of 2.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
-                        else
-                        {
-                            byte[] decodedData = ImaADPCM.DecodeIMA_ADPCM(imaData, imaData.Length * 2);
-                            WavFunctions.CreateMonoWavFile(saveFilePath, decodedData, (int)Numeric_DecodeFrequency.Value, 16);
-                        }
+                        byte[][] splittedData = ImaADPCM.SplitChannels(imaData, 2);
+                        short[] decodedDataLeftChannel = ImaADPCM.DecodeIMA_ADPCM(splittedData[0], splittedData[0].Length * 2);
+                        short[] decodedDataRightChannel = ImaADPCM.DecodeIMA_ADPCM(splittedData[1], splittedData[1].Length * 2);
+                        WavFunctions.CreateStereoWavFile(SaveFileDialog.FileName, WavFunctions.ShortArrayToByteArray(decodedDataLeftChannel), WavFunctions.ShortArrayToByteArray(decodedDataRightChannel), (int)Numeric_DecodeFrequency.Value);
+                    }
+                    else
+                    {
+                        short[] decodedData = ImaADPCM.DecodeIMA_ADPCM(imaData, imaData.Length * 2);
+                        WavFunctions.CreateMonoWavFile(SaveFileDialog.FileName, WavFunctions.ShortArrayToByteArray(decodedData), (int)Numeric_DecodeFrequency.Value, 16);
                     }
                 }
             }
-        }
-
-        bool IsPowerOfTwo(ulong x)
-        {
-            return (x != 0) && ((x & (x - 1)) == 0);
         }
     }
 }

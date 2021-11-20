@@ -31,6 +31,7 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ** Version 1.2, 18-Dec-92.
 */
 
+using System;
 using System.IO;
 
 namespace ImaAdpcm_Encoder_Decoder
@@ -64,11 +65,11 @@ namespace ImaAdpcm_Encoder_Decoder
         //*===============================================================================================
         //* ENCODER
         //*===============================================================================================
-        public static byte[] EncodeIMA_ADPCM(short[] input, int numSamples)
+        public static byte[] EncodeIMA_ADPCM(short[] input)
         {
-            byte[] EncodedIMAData;
+            MemoryStream outBuff = new MemoryStream();
+            int inp;			    /* Input buffer pointer */
             int val;                /* Current input sample value */
-            int inp;                /* Input buffer pointer */
             int sign;               /* Current adpcm sign bit */
             int delta;              /* Current adpcm output value */
             int diff;               /* Difference between val and valprev */
@@ -76,132 +77,126 @@ namespace ImaAdpcm_Encoder_Decoder
             int valpred;            /* Predicted output value */
             int vpdiff;             /* Current change to valpred */
             int index;              /* Current step change index */
-            int outputbuffer = 0;   /* place to keep previous 4-bit value */
+            int outputbuffer;       /* place to keep previous 4-bit value */
             bool bufferstep;        /* toggle between outputbuffer/output */
+            int numSamples;         /* Number of Samples to encode*/
+            ImaAdpcmState state = new ImaAdpcmState();
 
-            ImaAdpcmState m_state = new ImaAdpcmState();
+            outputbuffer = 0;
+            inp = 0;
+            numSamples = input.Length;
 
-            using (MemoryStream DecodedData = new MemoryStream())
+            valpred = state.valprev;
+            index = state.index;
+            step = stepsizeTable[index];
+
+            bufferstep = true;
+          
+            for (; numSamples > 0; numSamples--)
             {
-                using (BinaryWriter BWriter = new BinaryWriter(DecodedData))
+                val = input[inp++];
+
+                /* Step 1 - compute difference with previous value */
+                diff = val - valpred;
+                sign = (diff < 0) ? 8 : 0;
+                if (sign != 0) diff = (-diff);
+
+                /* Step 2 - Divide and clamp */
+                /* Note:
+                ** This code *approximately* computes:
+                **    delta = diff*4/step;
+                **    vpdiff = (delta+0.5)*step/4;
+                ** but in shift step bits are dropped. The net result of this is
+                ** that even if you have fast mul/div hardware you cannot put it to
+                ** good use since the fixup would be too expensive.
+                */
+                delta = 0;
+                vpdiff = (step >> 3);
+
+                if (diff >= step)
                 {
-                    inp = 0;
-
-                    valpred = m_state.valprev;
-                    index = m_state.index;
-                    step = stepsizeTable[index];
-
-                    bufferstep = true;
-
-                    for (; numSamples > 0; numSamples--)
-                    {
-                        val = input[inp];
-                        inp++;
-
-                        /* Step 1 - compute difference with previous value */
-                        diff = val - valpred;
-                        sign = (diff < 0) ? 8 : 0;
-                        if (sign != 0) diff = (-diff);
-
-                        /* Step 2 - Divide and clamp */
-                        /* Note:
-                        ** This code *approximately* computes:
-                        **    delta = diff*4/step;
-                        **    vpdiff = (delta+0.5)*step/4;
-                        ** but in shift step bits are dropped. The net result of this is
-                        ** that even if you have fast mul/div hardware you cannot put it to
-                        ** good use since the fixup would be too expensive.
-                        */
-                        delta = 0;
-                        vpdiff = (step >> 3);
-
-                        if (diff >= step)
-                        {
-                            delta = 4;
-                            diff -= step;
-                            vpdiff += step;
-                        }
-                        step >>= 1;
-                        if (diff >= step)
-                        {
-                            delta |= 2;
-                            diff -= step;
-                            vpdiff += step;
-                        }
-                        step >>= 1;
-                        if (diff >= step)
-                        {
-                            delta |= 1;
-                            vpdiff += step;
-                        }
-
-                        /* Step 3 - Update previous value */
-                        if (sign != 0)
-                            valpred -= vpdiff;
-                        else
-                            valpred += vpdiff;
-
-                        /* Step 4 - Clamp previous value to 16 bits */
-                        if (valpred > 32767)
-                            valpred = 32767;
-                        else if (valpred < -32768)
-                            valpred = -32768;
-
-                        /* Step 5 - Assemble value, update index and step values */
-                        delta |= sign;
-
-                        index += indexTable[delta];
-                        if (index < 0)
-                            index = 0;
-                        if (index > 88)
-                            index = 88;
-                        step = stepsizeTable[index];
-
-                        /* Step 6 - Output value */
-                        if (bufferstep)
-                        {
-                            outputbuffer = (delta << 4) & 0xf0;
-                        }
-                        else
-                        {
-                            BWriter.Write((byte)((delta & 0x0f) | outputbuffer));
-                        }
-                        bufferstep = !bufferstep;
-                    }
-
-                    /* Output last step, if needed */
-                    if (!bufferstep)
-                        BWriter.Write((byte)outputbuffer);
-
-                    m_state.valprev = valpred;
-                    m_state.index = index;
+                    delta = 4;
+                    diff -= step;
+                    vpdiff += step;
+                }
+                step >>= 1;
+                if (diff >= step)
+                {
+                    delta |= 2;
+                    diff -= step;
+                    vpdiff += step;
+                }
+                step >>= 1;
+                if (diff >= step)
+                {
+                    delta |= 1;
+                    vpdiff += step;
                 }
 
-                //Convert data to a byte array to save then in a IMA file.
-                EncodedIMAData = DecodedData.ToArray();
+                /* Step 3 - Update previous value */
+                if (sign != 0)
+                    valpred -= vpdiff;
+                else
+                    valpred += vpdiff;
+
+                /* Step 4 - Clamp previous value to 16 bits */
+                if (valpred > short.MaxValue)
+                    valpred = short.MaxValue;
+                else if (valpred < short.MinValue)
+                    valpred = short.MinValue;
+
+                /* Step 5 - Assemble value, update index and step values */
+                delta |= sign;
+
+                index += indexTable[delta];
+                if (index < 0) index = 0;
+                if (index > 88) index = 88;
+                step = stepsizeTable[index];
+
+                /* Step 6 - Output value */
+                if (bufferstep)
+                {
+                    outputbuffer = (delta << 4) & 0xf0;
+                }
+                else
+                {
+                    outBuff.WriteByte((byte)((delta & 0x0f) | outputbuffer));
+                }
+                bufferstep = !bufferstep;
             }
 
-            return EncodedIMAData;
+            /* Output last step, if needed */
+            if (!bufferstep)
+            {
+                outBuff.WriteByte((byte)outputbuffer);
+            }
+
+            state.valprev = valpred;
+            state.index = index;
+
+            return outBuff.ToArray();
         }
 
         //*===============================================================================================
         //* DECODER
         //*===============================================================================================
-        public static byte[] DecodeIMA_ADPCM(byte[] ImaFileData, int numSamples)
+        public static short[] DecodeIMA_ADPCM(byte[] ImaFileData, int numSamples)
         {
-            byte[] outp;           /* output buffer pointer */
-            uint inp;               /* Input buffer pointer */
-            int sign;               /* Current adpcm sign bit */
-            int delta;              /* Current adpcm output value */
-            int step;               /* Stepsize */
-            int valpred;            /* Predicted value */
-            int vpdiff;             /* Current change to valpred */
-            int index;              /* Current step change index */
-            int inputbuffer = 0;    /* place to keep next 4-bit value */
-            bool bufferstep;		/* toggle between inputbuffer/input */
+            short[] outBuff = new short[numSamples];
+            int inp;            /* Input buffer pointer */
+            int outIndex = 0;   /* output buffer pointer */
+            int sign;           /* Current adpcm sign bit */
+            int delta;          /* Current adpcm output value */
+            int step;           /* Stepsize */
+            int valpred;        /* Predicted value */
+            int vpdiff;         /* Current change to valpred */
+            int index;          /* Current step change index */
+            int inputbuffer;    /* place to keep next 4-bit value */
+            bool bufferstep;	/* toggle between inputbuffer/input */
 
             ImaAdpcmState state = new ImaAdpcmState();
             inp = 0;
+            inputbuffer = 0;
 
             valpred = state.valprev;
             index = state.index;
@@ -209,67 +204,60 @@ namespace ImaAdpcm_Encoder_Decoder
 
             bufferstep = false;
 
-            using (MemoryStream DecodedData = new MemoryStream())
+            for (; numSamples > 0; numSamples--)
             {
-                using (BinaryWriter BWriter = new BinaryWriter(DecodedData))
+                /* Step 1 - get the delta value */
+                if (bufferstep)
                 {
-                    for (int i = 0; i < numSamples; i++)
-                    {
-                        /* Step 1 - get the delta value */
-                        if (bufferstep)
-                        {
-                            delta = inputbuffer & 0xf;
-                        }
-                        else
-                        {
-                            inputbuffer = ImaFileData[inp];
-                            delta = (inputbuffer >> 4) & 0xf;
-                            inp++;
-                        }
-                        bufferstep = !bufferstep;
-
-                        /* Step 2 - Find new index value (for later) */
-                        index += indexTable[delta];
-                        if (index < 0) index = 0;
-                        if (index > 88) index = 88;
-
-                        /* Step 3 - Separate sign and magnitude */
-                        sign = delta & 8;
-                        delta &= 7;
-
-                        /* Step 4 - Compute difference and new predicted value */
-                        /*
-                        ** Computes 'vpdiff = (delta+0.5)*step/4', but see comment
-                        ** in adpcm_coder.
-                        */
-                        vpdiff = step >> 3;
-                        if ((delta & 4) != 0) vpdiff += step;
-                        if ((delta & 2) != 0) vpdiff += step >> 1;
-                        if ((delta & 1) != 0) vpdiff += step >> 2;
-
-                        if (sign != 0)
-                            valpred -= vpdiff;
-                        else
-                            valpred += vpdiff;
-
-                        /* Step 5 - clamp output value */
-                        if (valpred > 32767)
-                            valpred = 32767;
-                        else if (valpred < -32768)
-                            valpred = -32768;
-
-                        /* Step 6 - Update step value */
-                        step = stepsizeTable[index];
-
-                        /*Store data*/
-                        BWriter.Write((short)valpred);
-                    }
-                    state.valprev = valpred;
-                    state.index = index;
+                    delta = inputbuffer & 0xf;
                 }
-                outp = DecodedData.ToArray();
+                else
+                {
+                    inputbuffer = ImaFileData[inp++];
+                    delta = (inputbuffer >> 4) & 0xf;
+                }
+                bufferstep = !bufferstep;
+
+                /* Step 2 - Find new index value (for later) */
+                index += indexTable[delta];
+                if (index < 0) index = 0;
+                if (index > 88) index = 88;
+
+                /* Step 3 - Separate sign and magnitude */
+                sign = delta & 8;
+                delta = delta & 7;
+
+                /* Step 4 - Compute difference and new predicted value */
+                /*
+                ** Computes 'vpdiff = (delta+0.5)*step/4', but see comment
+                ** in adpcm_coder.
+                */
+                vpdiff = step >> 3;
+                if ((delta & 4) != 0) vpdiff += step;
+                if ((delta & 2) != 0) vpdiff += step >> 1;
+                if ((delta & 1) != 0) vpdiff += step >> 2;
+
+                if (sign != 0)
+                    valpred -= vpdiff;
+                else
+                    valpred += vpdiff;
+
+                /* Step 5 - clamp output value */
+                if (valpred > short.MaxValue)
+                    valpred = short.MaxValue;
+                else if (valpred < short.MinValue)
+                    valpred = short.MinValue;
+
+                /* Step 6 - Update step value */
+                step = stepsizeTable[index];
+
+                /* Step 7 - Output value */
+                outBuff[outIndex++] = (short)valpred;
             }
-            return outp;
+            state.valprev = valpred;
+            state.index = index;
+
+            return outBuff;
         }
 
         //*===============================================================================================
@@ -279,63 +267,64 @@ namespace ImaAdpcm_Encoder_Decoder
         {
             byte[] interleavedData = new byte[leftChannel.Length + rightChannel.Length];
 
-            bool swapchannel = true;
-            int leftChannelIndex = 0;
-            int rightChannelIndex = 0;
-            for (int i = 0; i < interleavedData.Length; i += interleaving)
+            //Interleave channels
+            using (MemoryStream memStream = new MemoryStream())
             {
-                //left
-                if (swapchannel)
+                using (BinaryWriter bw = new BinaryWriter(memStream))
                 {
-                    for (int j = 0; j < interleaving; j++)
+                    int IndexLC = 0, IndexRC = 0, i = 0;
+                    while (IndexLC < leftChannel.Length || IndexRC < rightChannel.Length)
                     {
-                        if (leftChannelIndex < leftChannel.Length)
+                        byte[] chunkToWrite = new byte[interleaving];
+                        if ((i % 2) == 0)
                         {
-                            interleavedData[i + j] = leftChannel[leftChannelIndex];
-                            leftChannelIndex++;
+                            if (leftChannel.Length - IndexLC > interleaving)
+                            {
+                                Buffer.BlockCopy(leftChannel, IndexLC, chunkToWrite, 0, interleaving);
+                            }
+                            else
+                            {
+                                int remainingData = leftChannel.Length - IndexLC;
+                                Buffer.BlockCopy(leftChannel, IndexLC, chunkToWrite, 0, remainingData);
+                            }
+                            IndexLC += interleaving;
                         }
+                        else
+                        {
+                            if (rightChannel.Length - IndexRC > interleaving)
+                            {
+                                Buffer.BlockCopy(rightChannel, IndexRC, chunkToWrite, 0, interleaving);
+                            }
+                            else
+                            {
+                                int remainingData = rightChannel.Length - IndexRC;
+                                Buffer.BlockCopy(rightChannel, IndexRC, chunkToWrite, 0, remainingData);
+                            }
+                            IndexRC += interleaving;
+                        }
+                        i++;
+                        bw.Write(chunkToWrite);
                     }
                 }
-                //right
-                else
-                {
-                    for (int j = 0; j < interleaving; j++)
-                    {
-                        if (rightChannelIndex < rightChannel.Length)
-                        {
-                            interleavedData[i + j] = rightChannel[rightChannelIndex];
-                            rightChannelIndex++;
-                        }
-                    }
-                }
-                swapchannel = !swapchannel;
+                interleavedData = memStream.ToArray();
             }
-
             return interleavedData;
         }
 
-        public static byte[] SplitImaChannels(byte[] inputByteData, int stereoInterleaving, bool leftChannel)
+        public static byte[][] SplitChannels(byte[] inout, int channels)
         {
-            byte[] channelData = new byte[(inputByteData.Length / 2)];
-            int channelDataIndex = 0;
-
-            for (int i = 0; i < inputByteData.Length; i += stereoInterleaving)
+            byte[][] tempbuf = new byte[2][];
+            int length = inout.Length / 2;
+            for (int c = 0; c < channels; c++)
             {
-                if (leftChannel)
-                {
-                    for (int j = 0; j < stereoInterleaving; j++)
-                    {
-                        if (channelDataIndex < channelData.Length)
-                        {
-                            channelData[channelDataIndex] = inputByteData[i + j];
-                            channelDataIndex++;
-                        }
-                    }
-                }
-                leftChannel = !leftChannel;
+                tempbuf[c] = new byte[length];
             }
-
-            return channelData;
+            for (int ix = 0, i = 0; ix < length; ix++)
+            {
+                tempbuf[0][ix] = inout[i++];
+                tempbuf[1][ix] = inout[i++];
+            }
+            return tempbuf;
         }
     }
 }
