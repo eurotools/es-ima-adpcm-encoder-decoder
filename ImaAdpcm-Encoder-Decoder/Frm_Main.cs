@@ -32,51 +32,51 @@ namespace ImaAdpcm_Encoder_Decoder
             //Ensure that the file still exists
             if (File.Exists(Textbox_EncodeFilePath.Text))
             {
-                    using (WaveFileReader fileReader = new WaveFileReader(Textbox_EncodeFilePath.Text))
+                using (WaveFileReader fileReader = new WaveFileReader(Textbox_EncodeFilePath.Text))
+                {
+                    if (fileReader.WaveFormat.BitsPerSample == 16 && fileReader.WaveFormat.Encoding == WaveFormatEncoding.Pcm)
                     {
-                        if (fileReader.WaveFormat.BitsPerSample == 16 && fileReader.WaveFormat.Encoding == WaveFormatEncoding.Pcm)
+                        //Get PCM Data (in bytes)
+                        byte[] pcmData = new byte[fileReader.Length];
+                        fileReader.Read(pcmData, 0, (int)fileReader.Length);
+
+                        //Parse PCM Data to a short array
+                        short[] samplesShort = new short[pcmData.Length / 2];
+                        WaveBuffer sourceWaveBuffer = new WaveBuffer(pcmData);
+                        for (int i = 0; i < samplesShort.Length; i++)
                         {
-                            //Get PCM Data (in bytes)
-                            byte[] pcmData = new byte[fileReader.Length];
-                            fileReader.Read(pcmData, 0, (int)fileReader.Length);
-
-                            //Parse PCM Data to a short array
-                            short[] samplesShort = new short[pcmData.Length / 2];
-                            WaveBuffer sourceWaveBuffer = new WaveBuffer(pcmData);
-                            for (int i = 0; i < samplesShort.Length; i++)
-                            {
-                                samplesShort[i] = sourceWaveBuffer.ShortBuffer[i];
-                            }
-
-                            //Save File
-                            SaveFileDialog.Filter = "Interactive Multimedia Association ADPCM File(*.ima)| *.ima";
-                            SaveFileDialog.FileName = string.Join("", Path.GetFileNameWithoutExtension(Textbox_EncodeFilePath.Text), "_Encoded");
-                            DialogResult saveFileDialog = SaveFileDialog.ShowDialog();
-                            if (saveFileDialog == DialogResult.OK)
-                            {
-                                //Encode stereo
-                                byte[] encodedData;
-                                if (fileReader.WaveFormat.Channels == 2)
-                                {
-                                    short[][] splittedData = WavFunctions.SplitChannels(samplesShort, 2);
-                                    byte[] encodedDataLeftChannel = ImaADPCM.EncodeIMA_ADPCM(splittedData[0]);
-                                    byte[] encodedDataRightChannel = ImaADPCM.EncodeIMA_ADPCM(splittedData[1]);
-
-                                    encodedData = ImaADPCM.CombineChannelsIMA(encodedDataLeftChannel, encodedDataRightChannel, 1);
-                                }
-                                //Encode mono
-                                else
-                                {
-                                    encodedData = ImaADPCM.EncodeIMA_ADPCM(samplesShort);
-                                }
-                                File.WriteAllBytes(SaveFileDialog.FileName, encodedData);
-                            }
+                            samplesShort[i] = sourceWaveBuffer.ShortBuffer[i];
                         }
-                        else
+
+                        //Save File
+                        SaveFileDialog.Filter = "Interactive Multimedia Association ADPCM File(*.ima)| *.ima";
+                        SaveFileDialog.FileName = string.Join("", Path.GetFileNameWithoutExtension(Textbox_EncodeFilePath.Text), "_Encoded");
+                        DialogResult saveFileDialog = SaveFileDialog.ShowDialog();
+                        if (saveFileDialog == DialogResult.OK)
                         {
-                            MessageBox.Show("Format not supported", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            //Encode stereo
+                            byte[] encodedData;
+                            if (fileReader.WaveFormat.Channels == 2)
+                            {
+                                short[][] splittedData = WavFunctions.SplitChannels(samplesShort, 2);
+                                byte[] encodedDataLeftChannel = ImaADPCM.EncodeIMA_ADPCM(splittedData[0]);
+                                byte[] encodedDataRightChannel = ImaADPCM.EncodeIMA_ADPCM(splittedData[1]);
+
+                                encodedData = ImaADPCM.CombineChannelsIMA(encodedDataLeftChannel, encodedDataRightChannel, 1);
+                            }
+                            //Encode mono
+                            else
+                            {
+                                encodedData = ImaADPCM.EncodeIMA_ADPCM(samplesShort);
+                            }
+                            File.WriteAllBytes(SaveFileDialog.FileName, encodedData);
                         }
                     }
+                    else
+                    {
+                        MessageBox.Show("Format not supported", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
         }
 
