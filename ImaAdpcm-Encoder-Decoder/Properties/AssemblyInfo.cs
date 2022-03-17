@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // La información general de un ensamblado se controla mediante el siguiente 
 // conjunto de atributos. Cambie estos valores de atributo para modificar la información
-// asociada con un ensamblado.
+// asociada a un ensamblado.
 [assembly: AssemblyTitle("ImaAdpcm-Tool")]
 [assembly: AssemblyDescription("A simple tool to encode-decode headerless IMA ADPCM files.")]
 [assembly: AssemblyConfiguration("")]
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // El siguiente GUID sirve como id. de typelib si este proyecto se expone a COM.
-[assembly: Guid("d4311c17-a45c-4d41-988e-6a10cd2b15d1")]
+[assembly: Guid("1f2c6086-2b24-4a37-928e-bcb007600eb6")]
 
 // La información de versión de un ensamblado consta de los cuatro valores siguientes:
 //
