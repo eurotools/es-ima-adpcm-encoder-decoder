@@ -2,8 +2,7 @@
 [![Issues](https://img.shields.io/github/issues/eurotools/ima-adpcm_encoder-decoder)](https://github.com/eurotools/ima-adpcm_encoder-decoder/issues)
 [![GitHub Release](https://img.shields.io/github/v/release/eurotools/ima-adpcm_encoder-decoder)](https://github.com/eurotools/ima-adpcm_encoder-decoder/releases/latest)
 
-# IMA ADPCM Audio Tool
-Welcome to the **IMA ADPCM Audio Tool**, a console-based utility developed by jmarti856 for encoding and decoding audio files using the IMA ADPCM format. This tool is specialized for mono audio files and is designed to handle 16-bit WAV files.
+**IMA ADPCM Audio Tool**, is a console-based utility developed for encoding and decoding audio files using the IMA ADPCM format. This tool is specialized for mono audio files and is designed to handle 16-bit WAV files.
 
 ## Features
 - Encode 16-bit PCM WAV files into the IMA ADPCM format.
