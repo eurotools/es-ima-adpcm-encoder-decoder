@@ -2,12 +2,43 @@
 [![Issues](https://img.shields.io/github/issues/eurotools/ima-adpcm_encoder-decoder)](https://github.com/eurotools/ima-adpcm_encoder-decoder/issues)
 [![GitHub Release](https://img.shields.io/github/v/release/eurotools/ima-adpcm_encoder-decoder)](https://github.com/eurotools/ima-adpcm_encoder-decoder/releases/latest)
 
-### Features
-This tool can be used to encode 16-bits PCM Wav files to the IMA ADPCM Format, and vice-versa. 
+# IMA ADPCM Audio Tool
+Welcome to the **IMA ADPCM Audio Tool**, a console-based utility developed by jmarti856 for encoding and decoding audio files using the IMA ADPCM format. This tool is specialized for mono audio files and is designed to handle 16-bit WAV files.
 
-It is only compatible with headerless IMA ADPCM files, so, to decode an IMA file is required to know previously the frequency and the number of channels to avoid undesired results when decoding. 
+## Features
+- Encode 16-bit PCM WAV files into the IMA ADPCM format.
+- Decode IMA ADPCM files back to the 16-bit PCM WAV format.
+- Tailored for processing mono audio files.
 
-### Download
-Click here to download:
+## Compatibility Note
+This tool is designed to work with headerless IMA ADPCM files. When decoding an IMA file, prior knowledge of the frequency and the number of channels is necessary to ensure accurate results during the decoding process.
 
-[![GitHub All Releases](https://img.shields.io/github/v/release/eurotools/ima-adpcm_encoder-decoder?style=for-the-badge)](https://github.com/eurotools/ima-adpcm_encoder-decoder/releases/latest)
+## Download
+To start using the IMA ADPCM Audio Tool, download the latest version from the link below:
+
+[[![GitHub All Releases](https://img.shields.io/github/v/release/eurotools/ima-adpcm_encoder-decoder?style=for-the-badge)](https://github.com/eurotools/ima-adpcm_encoder-decoder/releases/latest)
+
+## Usage
+
+### Encoding
+To encode a 16-bit PCM WAV file into IMA ADPCM format, use the following command:
+
+```console
+ImaAdpcmTool.exe <InputFile> <OutputFile>
+```
+
+```console
+ImaAdpcmTool.exe "input.wav" "output.adpcm"
+```
+
+### Decoding
+For decoding an IMA ADPCM file back to a 16-bit PCM WAV file, use the command:
+
+```console
+ImaAdpcmTool.exe <InputFile> <OutputFile> <Frequency>
+```
+Replace <Frequency> with the actual frequency value.
+
+```
+ImaAdpcmTool.exe Decode "input.adpcm" "output.wav" 44100
+```
